@@ -2,7 +2,9 @@ using apiDadosTempo.Adapters;
 using apiDadosTempo.Context;
 using apiDadosTempo.Interfaces.Adapter;
 using apiDadosTempo.Interfaces.Repositories;
+using apiDadosTempo.Interfaces.UseCases;
 using apiDadosTempo.Repositories;
+using apiDadosTempo.UseCase;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +37,8 @@ namespace apiDadosTempo
             services.AddScoped<IRepositorioCidadeTemperatura, RepositorioCidadeTemperatura>();
 
             services.AddScoped<IRetornaBuscaCidadeResponseAdapter, RetornaBuscaCidadeResponseAdapter>();
+
+            services.AddScoped<IUseCaseCidade, UseCaseCidade>();
 
             #endregion
 

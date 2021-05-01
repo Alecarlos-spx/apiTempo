@@ -3,6 +3,7 @@ using apiDadosTempo.DTO;
 using apiDadosTempo.Entities;
 using apiDadosTempo.Interfaces.Adapter;
 using apiDadosTempo.Interfaces.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -15,107 +16,44 @@ namespace apiDadosTempo.Repositories
     public class RepositorioCidadeTemperatura : IRepositorioCidadeTemperatura
     {
         private readonly ContextData _context;
-        private readonly IRetornaBuscaCidadeResponseAdapter _adapter;
 
-        public RepositorioCidadeTemperatura(ContextData context, IRetornaBuscaCidadeResponseAdapter adapter)
+
+        public RepositorioCidadeTemperatura(ContextData context)
         {
             _context = context;
-            _adapter = adapter;
+      
         }
 
-        public async Task<BuscaCidadeResponse> Add(string request)
+        public void Add(CidadeTemperatura request)
         {
-            var response = new BuscaCidadeResponse();
-
-            var cidadeRetorno = _context.cidadeTemperatura.Where(c => c.Cidade.Contains(request)).FirstOrDefault();
-
-
-            if (cidadeRetorno == null)
-            {
-                var novacidade = await ConsultarDadosTemperaturaCidade(request);
-
-                var cidadeModelo = _adapter.converterResponseParaCidadeTemperatura(novacidade);
-
-                _context.cidadeTemperatura.Add(cidadeModelo);
-                _context.SaveChanges();
-
-                return novacidade;
-            }
-
-                
-            if(cidadeRetorno.Cidade == request)
-            {
-                DateTime dataAtual = DateTime.Now;
-
-                if (dataAtual == cidadeRetorno.DataHoraConsulta)
-                {
-                    if(dataAtual.Hour == cidadeRetorno.DataHoraConsulta.Hour && dataAtual.Minute <= (cidadeRetorno.DataHoraConsulta.Minute + 20))
-                    {
-                        response = _adapter.converterCidadeTemperaturaParaResponse(cidadeRetorno);
-                        return response;
-
-                    }
-
-                }
-
-             
-            }
-            response = _adapter.converterCidadeTemperaturaParaResponse(cidadeRetorno);
-            return response;
-
-            
+               _context.cidadeTemperatura.Add(request);
+               _context.SaveChanges();
         }
 
         public CidadeTemperatura GetCidade(string request)
         {
-            throw new NotImplementedException();
+            return _context.cidadeTemperatura.Where(c => c.Cidade.Contains(request)).FirstOrDefault();
+             
         }
 
-        public string Update(CidadeTemperatura request)
+        public void Update(CidadeTemperatura request, int id)
         {
-            throw new NotImplementedException();
-        }
-
-
-        public async Task<BuscaCidadeResponse> ConsultarDadosTemperaturaCidade(string request)
-        {
-            var response = new BuscaCidadeResponse();
-            using (var client = new HttpClient())
+            request.Id = id;
+            var local = _context.Set<CidadeTemperatura>().Local.Where(x => x.Id == id).FirstOrDefault();
+            if (local != null)
             {
-                try
-                {
-                    client.BaseAddress = new Uri("http://api.openweathermap.org");
-                    var novacidade = await client.GetAsync($"/data/2.5/weather?q={request}&appid=1a788676b927fd9d836e736fd6e92e25&units=metric");
-                    novacidade.EnsureSuccessStatusCode();
-
-                    var stringResult = await novacidade.Content.ReadAsStringAsync();
-
-                    var alternativa = JsonConvert.DeserializeObject<Rootobject>(stringResult);
-
-                    response.Cidade = request;
-                    response.Temp = alternativa.main.temp;
-                    response.Min = alternativa.main.temp_min;
-                    response.Max = alternativa.main.temp_max;
-                    response.DataHoraConsulta = DateTime.Now;
-
-
-                    //response = 
-                    return response;
-                    //    (new
-                    //{
-                    //    Temp = rawWeather.Main.Temp,
-                    //    Summary = string.Join(",", rawWeather.Weather.Select(x => x.Main)),
-                    //    City = rawWeather.Name
-                    //});
-                }
-                catch (HttpRequestException httpRequestException)
-                {
-                    return response;
-                           //BadRequest($"Error getting weather from OpenWeather: {httpRequestException.Message}");
-                }
+                _context.Entry(local).State = EntityState.Detached;
             }
+            //_context.Attach<CidadeTemperatura>(local);
 
+            _context.cidadeTemperatura.Update(request);
+            _context.SaveChanges();
         }
+
+
+       
+
+       
 
 
 
