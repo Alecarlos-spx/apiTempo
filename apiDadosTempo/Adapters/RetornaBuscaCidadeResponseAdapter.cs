@@ -13,10 +13,11 @@ namespace apiDadosTempo.Adapters
         public BuscaCidadeResponse converterCidadeTemperaturaParaResponse(CidadeTemperatura cidade)
         {
             var response = new BuscaCidadeResponse();
-            response.cidade = cidade.cidade;
-            response.temp = cidade.temp;
-            response.min = cidade.min;
-            response.max = cidade.max;
+            response.Cidade = cidade.Cidade;
+            response.Temp = cidade.Temp;
+            response.Min = cidade.Min;
+            response.Max = cidade.Max;
+            response.DataHoraConsulta = cidade.DataHoraConsulta;
 
             return response;
         }
@@ -24,11 +25,11 @@ namespace apiDadosTempo.Adapters
         public CidadeTemperatura converterResponseParaCidadeTemperatura(BuscaCidadeResponse response)
         {
             var cidade = new CidadeTemperatura();
-             cidade.cidade = response.cidade;
-             cidade.temp = response.temp;
-             cidade.min = response.min;
-             cidade.max = response.max;
-            cidade.dataHoraConsulta = response.dataHoraConsulta;
+             cidade.Cidade = response.Cidade;
+             cidade.Temp = response.Temp;
+             cidade.Min = response.Min;
+             cidade.Max = response.Max;
+            cidade.DataHoraConsulta = response.DataHoraConsulta;
 
             return cidade;
         }

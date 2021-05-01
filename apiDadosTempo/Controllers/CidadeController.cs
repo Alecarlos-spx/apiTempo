@@ -19,10 +19,10 @@ namespace apiDadosTempo.Controllers
             _repositorio = repositorio;
         }
 
-        [HttpPost]
-        public IActionResult Post([FromBody]BuscaCidadeRequest cidade)
+        [HttpGet]
+        public async Task<IActionResult> Get(string cidade)
         {
-            var response = _repositorio.Add(cidade);
+            var response = await _repositorio.Add(cidade);
             return Ok(response);
         }
     }

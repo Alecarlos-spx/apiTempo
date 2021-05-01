@@ -6,7 +6,7 @@ namespace apiDadosTempo.Interfaces.Repositories
 {
     public interface IRepositorioCidadeTemperatura
     {
-        public Task<BuscaCidadeResponse> Add(BuscaCidadeRequest request);
+        public Task<BuscaCidadeResponse> Add(string request);
         public string Update(CidadeTemperatura request);
         public CidadeTemperatura GetCidade(string request);
 

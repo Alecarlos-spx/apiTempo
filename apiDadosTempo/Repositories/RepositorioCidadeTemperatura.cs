@@ -23,11 +23,11 @@ namespace apiDadosTempo.Repositories
             _adapter = adapter;
         }
 
-        public async Task<BuscaCidadeResponse> Add(BuscaCidadeRequest request)
+        public async Task<BuscaCidadeResponse> Add(string request)
         {
             var response = new BuscaCidadeResponse();
 
-            var cidadeRetorno = _context.cidadeTemperatura.Where(c => c.cidade.Contains(request.Cidade)).FirstOrDefault();
+            var cidadeRetorno = _context.cidadeTemperatura.Where(c => c.Cidade.Contains(request)).FirstOrDefault();
 
 
             if (cidadeRetorno == null)
@@ -43,18 +43,24 @@ namespace apiDadosTempo.Repositories
             }
 
                 
-            if(cidadeRetorno.cidade == request.Cidade)
+            if(cidadeRetorno.Cidade == request)
             {
-                DateTime horarioAtual = DateTime.Now;
+                DateTime dataAtual = DateTime.Now;
 
-                if(horarioAtual.Hour == cidadeRetorno.dataHoraConsulta.Hour && horarioAtual.Minute <= (cidadeRetorno.dataHoraConsulta.Minute + 20))
+                if (dataAtual == cidadeRetorno.DataHoraConsulta)
                 {
-                    response = _adapter.converterCidadeTemperaturaParaResponse(cidadeRetorno);
-                    return response;
+                    if(dataAtual.Hour == cidadeRetorno.DataHoraConsulta.Hour && dataAtual.Minute <= (cidadeRetorno.DataHoraConsulta.Minute + 20))
+                    {
+                        response = _adapter.converterCidadeTemperaturaParaResponse(cidadeRetorno);
+                        return response;
+
+                    }
 
                 }
-            }
 
+             
+            }
+            response = _adapter.converterCidadeTemperaturaParaResponse(cidadeRetorno);
             return response;
 
             
@@ -71,7 +77,7 @@ namespace apiDadosTempo.Repositories
         }
 
 
-        public async Task<BuscaCidadeResponse> ConsultarDadosTemperaturaCidade(BuscaCidadeRequest request)
+        public async Task<BuscaCidadeResponse> ConsultarDadosTemperaturaCidade(string request)
         {
             var response = new BuscaCidadeResponse();
             using (var client = new HttpClient())
@@ -79,18 +85,18 @@ namespace apiDadosTempo.Repositories
                 try
                 {
                     client.BaseAddress = new Uri("http://api.openweathermap.org");
-                    var novacidade = await client.GetAsync($"/data/2.5/weather?q={request.Cidade}&appid=1a788676b927fd9d836e736fd6e92e25&units=metric");
+                    var novacidade = await client.GetAsync($"/data/2.5/weather?q={request}&appid=1a788676b927fd9d836e736fd6e92e25&units=metric");
                     novacidade.EnsureSuccessStatusCode();
 
                     var stringResult = await novacidade.Content.ReadAsStringAsync();
 
                     var alternativa = JsonConvert.DeserializeObject<Rootobject>(stringResult);
 
-                    response.cidade = request.Cidade;
-                    response.temp = alternativa.main.temp;
-                    response.min = alternativa.main.temp_min;
-                    response.max = alternativa.main.temp_max;
-                    response.dataHoraConsulta = DateTime.Now;
+                    response.Cidade = request;
+                    response.Temp = alternativa.main.temp;
+                    response.Min = alternativa.main.temp_min;
+                    response.Max = alternativa.main.temp_max;
+                    response.DataHoraConsulta = DateTime.Now;
 
 
                     //response = 
