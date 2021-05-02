@@ -17,16 +17,18 @@ namespace apiDadosTempo.UseCase
     {
         private readonly IRepositorioCidadeTemperatura _repositorio;
         private readonly IRetornaBuscaCidadeResponseAdapter _adapter;
+        private readonly IConsultarDadosTemperaturaCidadeApi _consultaCidade;
 
-        public UseCaseCidade(IRetornaBuscaCidadeResponseAdapter adapter, IRepositorioCidadeTemperatura repositorio)
+        public UseCaseCidade(IRepositorioCidadeTemperatura repositorio, IRetornaBuscaCidadeResponseAdapter adapter, IConsultarDadosTemperaturaCidadeApi consultaCidade)
         {
-
-            _adapter = adapter;
             _repositorio = repositorio;
+            _adapter = adapter;
+            _consultaCidade = consultaCidade;
         }
 
         public async Task<BuscaCidadeResponse> Executar(string cidade)
         {
+            
             var response = new BuscaCidadeResponse();
 
             var cidadeRetorno = _repositorio.GetCidade(cidade);
@@ -34,7 +36,12 @@ namespace apiDadosTempo.UseCase
 
             if (cidadeRetorno == null)
             {
-                var novacidade = await ConsultarDadosTemperaturaCidade(cidade);
+                var novacidade = await _consultaCidade.ConsultarDadosTemperaturaCidade(cidade);
+                if (novacidade.Cidade == null)
+                {
+                    novacidade.msg = "erro ao buscar cidade";
+                    return novacidade;
+                }
                 var cidadeModelo = _adapter.converterResponseParaCidadeTemperatura(novacidade);
                 _repositorio.Add(cidadeModelo);
                 return novacidade;
@@ -53,7 +60,7 @@ namespace apiDadosTempo.UseCase
                 }
                 else
                 {
-                    var novacidade = await ConsultarDadosTemperaturaCidade(cidade);
+                    var novacidade = await _consultaCidade.ConsultarDadosTemperaturaCidade(cidade);
                     var cidadeModelo = _adapter.converterResponseParaCidadeTemperatura(novacidade);
                     _repositorio.Update(cidadeModelo, cidadeRetorno.Id);
                     return novacidade;

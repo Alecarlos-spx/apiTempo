@@ -1,15 +1,8 @@
 ﻿using apiDadosTempo.Context;
-using apiDadosTempo.DTO;
 using apiDadosTempo.Entities;
-using apiDadosTempo.Interfaces.Adapter;
 using apiDadosTempo.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System;
 using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using static apiDadosTempo.Entities.ApiTempoDados;
 
 namespace apiDadosTempo.Repositories
 {
@@ -49,13 +42,5 @@ namespace apiDadosTempo.Repositories
             _context.cidadeTemperatura.Update(request);
             _context.SaveChanges();
         }
-
-
-       
-
-       
-
-
-
     }
 }

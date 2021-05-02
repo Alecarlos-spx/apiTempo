@@ -38,6 +38,8 @@ namespace apiDadosTempo
 
             services.AddScoped<IRetornaBuscaCidadeResponseAdapter, RetornaBuscaCidadeResponseAdapter>();
 
+            services.AddScoped<IConsultarDadosTemperaturaCidadeApi, ConsultarDadosTemperaturaCidadeApi>();
+
             services.AddScoped<IUseCaseCidade, UseCaseCidade>();
 
             #endregion

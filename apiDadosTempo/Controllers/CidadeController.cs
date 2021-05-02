@@ -24,6 +24,10 @@ namespace apiDadosTempo.Controllers
         public async Task<IActionResult> Get(string cidade)
         {
             var response = await _useCaseCidade.Executar(cidade);
+            if (response.msg != null)
+            {
+                return BadRequest(response.msg);
+            }
             return Ok(response);
         }
     }
