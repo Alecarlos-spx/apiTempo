@@ -1,5 +1,6 @@
 ﻿using apiDadosTempo.DTO;
 using apiDadosTempo.Interfaces.Repositories;
+using apiDadosTempo.Interfaces.UseCases;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,17 +13,21 @@ namespace apiDadosTempo.Controllers
     [Route("api/[Controller]")]
     public class CidadeController : ControllerBase
     {
-        private readonly IRepositorioCidadeTemperatura _repositorio;
+        private readonly IUseCaseCidade _useCaseCidade;
 
-        public CidadeController(IRepositorioCidadeTemperatura repositorio)
+        public CidadeController(IUseCaseCidade useCaseCidade)
         {
-            _repositorio = repositorio;
+            _useCaseCidade = useCaseCidade;
         }
 
-        [HttpPost]
-        public IActionResult Post([FromBody]BuscaCidadeRequest cidade)
+        [HttpGet]
+        public async Task<IActionResult> Get(string cidade)
         {
-            var response = _repositorio.Add(cidade);
+            var response = await _useCaseCidade.Executar(cidade);
+            if (response.msg == "erro ao buscar cidade")
+            {
+                return BadRequest(response.msg);
+            }
             return Ok(response);
         }
     }

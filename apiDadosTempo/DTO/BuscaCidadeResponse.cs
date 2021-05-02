@@ -7,13 +7,15 @@ namespace apiDadosTempo.DTO
 {
     public class BuscaCidadeResponse
     {
-        public string cidade { get; set; }
-     
-        public double temp { get; set; }
-      
-        public double min { get; set; }
-     
-        public double max { get; set; }
-        public DateTime dataHoraConsulta { get; set; }
+        public string Cidade { get; set; }
+
+        public double Temp { get; set; }
+
+        public double Min { get; set; }
+
+        public double Max { get; set; }
+        public DateTime DataHoraConsulta { get; set; }
+
+        public string msg { get; set; }
     }
 }
