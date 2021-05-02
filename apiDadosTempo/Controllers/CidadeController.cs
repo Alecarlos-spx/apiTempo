@@ -24,7 +24,7 @@ namespace apiDadosTempo.Controllers
         public async Task<IActionResult> Get(string cidade)
         {
             var response = await _useCaseCidade.Executar(cidade);
-            if (response.msg != null)
+            if (response.msg == "erro ao buscar cidade")
             {
                 return BadRequest(response.msg);
             }

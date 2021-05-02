@@ -44,6 +44,7 @@ namespace apiDadosTempo.UseCase
                 }
                 var cidadeModelo = _adapter.converterResponseParaCidadeTemperatura(novacidade);
                 _repositorio.Add(cidadeModelo);
+                novacidade.msg = "Busca realizada com sucesso";
                 return novacidade;
             }
 
@@ -55,6 +56,7 @@ namespace apiDadosTempo.UseCase
                 if (ComparaDatas(dataAtual, cidadeRetorno.DataHoraConsulta)){
 
                         response = _adapter.converterCidadeTemperaturaParaResponse(cidadeRetorno);
+                        response.msg = "Busca realizada com sucesso";
                         return response;
 
                 }
@@ -63,6 +65,7 @@ namespace apiDadosTempo.UseCase
                     var novacidade = await _consultaCidade.ConsultarDadosTemperaturaCidade(cidade);
                     var cidadeModelo = _adapter.converterResponseParaCidadeTemperatura(novacidade);
                     _repositorio.Update(cidadeModelo, cidadeRetorno.Id);
+                    novacidade.msg = "Busca realizada com sucesso";
                     return novacidade;
                 }
 
